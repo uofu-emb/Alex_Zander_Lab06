@@ -3,7 +3,8 @@
 
 void busy_counter(int *pointer){
     while(1){
-        *pointer++;
+        *pointer = *pointer + 1;
+        printk("Count: %d", *pointer);
     }
 }
 
