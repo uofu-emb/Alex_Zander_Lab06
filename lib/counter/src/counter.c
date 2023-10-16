@@ -1,10 +1,9 @@
 #include "counter.h"
 #include <zephyr.h>
 
-void busy_counter(){
-    int i = 0;
+void busy_counter(int *pointer){
     while(1){
-        i++;
+        *pointer++;
     }
 }
 
