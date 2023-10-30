@@ -69,30 +69,512 @@ void coop_equal_busy_busy(void)
     printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
 }
 
-void coop_equal_busy_yield(void) {}
+void coop_equal_busy_yield(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
 
-void preempt_equal_busy_busy(void) {}
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(100));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(15));
 
-void preempt_equal_busy_yield(void) {}
+    k_thread_join(&super, K_MSEC(150));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
 
-void coop_high_busy_busy(void) {}
+void preempt_equal_busy_busy(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
 
-void coop_low_busy_busy(void) {}
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(100));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(15));
 
-void coop_high_busy_yield(void) {}
+    k_thread_join(&super, K_MSEC(150));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
 
-void coop_low_busy_yield(void) {}
+void preempt_equal_busy_yield(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
 
-void preempt_high_busy_busy(void) {}
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(100));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(15));
 
-void preempt_low_busy_busy(void) {}
+    k_thread_join(&super, K_MSEC(150));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
 
-void preempt_high_busy_yield(void) {}
+void coop_high_busy_busy(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
 
-void preempt_low_busy_yield(void) {}
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(5),
+                    0,
+                    K_MSEC(150));
+
+    k_thread_join(&super, K_MSEC(1200));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void coop_low_busy_busy(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(120));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(5),
+                    0,
+                    K_MSEC(15));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void coop_high_busy_yield(void) 
+{k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(150));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);}
+
+void coop_low_busy_yield(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(120));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_COOP(2),
+                    0,
+                    K_MSEC(15));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void preempt_high_busy_busy(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(5),
+                    0,
+                    K_MSEC(150));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void preempt_low_busy_busy(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(120));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_busy,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(5),
+                    0,
+                    K_MSEC(15));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void preempt_high_busy_yield(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(12));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(5),
+                    0,
+                    K_MSEC(150));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
+
+void preempt_low_busy_yield(void) 
+{
+    k_thread_t thread1, thread2, super;
+    k_thread_runtime_stats_t thread1_stats, thread2_stats;
+
+    k_thread_create(&super,
+                    super_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) super_entry,
+                    &thread1,
+                    &thread2,
+                    NULL,
+                    -CONFIG_NUM_COOP_PRIORITIES,
+                    0,
+                    K_MSEC(1000));
+    k_thread_create(&thread1,
+                    thread1_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(2),
+                    0,
+                    K_MSEC(120));
+    k_thread_create(&thread2,
+                    thread2_stack,
+                    STACKSIZE,
+                    (k_thread_entry_t) busy_yield,
+                    NULL,
+                    NULL,
+                    NULL,
+                    K_PRIO_PREEMPT(5),
+                    0,
+                    K_MSEC(15));
+
+    k_thread_join(&super, K_MSEC(1500));
+    
+    k_thread_runtime_stats_get(&thread1, &thread1_stats);
+    k_thread_runtime_stats_get(&thread2, &thread2_stats);
+    k_thread_abort(&thread1);
+    k_thread_abort(&thread2);
+    printk("Thread1 cycles: %llu\nThread2 cycles: %llu\n", thread1_stats.execution_cycles, thread2_stats.execution_cycles);
+}
 
 int main(void) {
     UNITY_BEGIN();
     RUN_TEST(coop_equal_busy_busy);
+    RUN_TEST(preempt_equal_busy_busy);
+    RUN_TEST(coop_equal_busy_yield);
+    RUN_TEST(preempt_equal_busy_yield);
+    RUN_TEST(coop_high_busy_busy);
+    RUN_TEST(coop_low_busy_busy);
+    RUN_TEST(coop_high_busy_yield);
+    RUN_TEST(coop_low_busy_yield);
+    RUN_TEST(preempt_high_busy_busy);
+    RUN_TEST(preempt_low_busy_busy);
+    RUN_TEST(preempt_high_busy_yield);
+    RUN_TEST(preempt_low_busy_yield);
     return UNITY_END();
 }

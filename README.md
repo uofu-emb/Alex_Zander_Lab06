@@ -7,6 +7,7 @@ Threads set with preemptive priority 3 and 4 for testing. When the higher priori
 ## Activity 1
 
 Notes from running individual tests
+
 1. Cooperative running `busy_busy`
    1. The thread that began first has more than 0 cycles run and the second thread doesn't run at all.
 2. Cooperative running `busy_yield`
