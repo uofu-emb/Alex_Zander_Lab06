@@ -19,6 +19,10 @@ void super_entry(k_thread_t *thread1, k_thread_t *thread2)
     k_thread_suspend(thread2);
 }
 
+void setUp(void) {}
+
+void tearDown(void) {}
+
 void test_cooperative()
 {
     k_thread_t thread1, thread2, super;
@@ -33,7 +37,7 @@ void test_cooperative()
                     NULL,
                     -CONFIG_NUM_COOP_PRIORITIES,
                     0,
-                    K_MSEC(100));
+                    K_MSEC(5000));
     k_thread_create(&thread1,
                     thread1_stack,
                     STACKSIZE,
@@ -55,7 +59,7 @@ void test_cooperative()
                     0,
                     K_MSEC(15));
 
-    k_thread_join(&super, K_MSEC(5000));
+    k_thread_join(&super, K_MSEC(5500));
     
     k_thread_runtime_stats_get(&thread1, &thread1_stats);
     k_thread_runtime_stats_get(&thread2, &thread2_stats);
