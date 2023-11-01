@@ -20,3 +20,8 @@ void busy_yield(char *name){
     }
 }
 
+void busy_sleep(char *name)
+{
+  k_busy_wait(10000);
+  k_sleep(K_MSEC(490));
+}
